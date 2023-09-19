@@ -1,0 +1,13 @@
+<launch>
+    <node pkg="jaxa_communication" type="tool_pose_udp_transmitter.py"
+          name="tool_pose_udp_transmitter_node" required="true">
+        <rosparam subst_value="true">
+            port: 20023
+            remote_ip: 10.198.113.183
+            arm1_manipulator_ns: 0_0
+            arm1_kinematics_ns: /arm1_kinematics
+            arm2_manipulator_ns: 0_1
+            arm2_kinematics_ns: /arm2_kinematics
+        </rosparam>
+    </node>
+</launch>
