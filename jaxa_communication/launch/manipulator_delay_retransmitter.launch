@@ -1,0 +1,14 @@
+<launch>
+    <node pkg="jaxa_communication" type="manipulator_delay_retransmitter.py"
+          name="manipulator_delay_retransmitter_node" required="true">
+        <rosparam subst_value="true">
+            patient_side_port: 2220
+            operator_side_port: 2220
+            retransmit_ips: ["127.0.0.1", "10.198.113.184"]
+            retransmit_ps_ports: [2222, 2223]
+            retransmit_os_ports: [2221, 2223]
+            retransmit_delay: [0, 5.0]
+            retransmit_to_master_select: [True, False]
+        </rosparam>
+    </node>
+</launch>
