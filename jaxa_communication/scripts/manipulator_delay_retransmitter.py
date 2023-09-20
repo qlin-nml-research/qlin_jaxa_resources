@@ -159,7 +159,7 @@ class DelayRetransmitterMain:
                                 udp_send_sock,
                                 self.rt_udp_InfoFromMaster_send_addrs[instance_index],
                                 data_array,
-                                self.rt_udp_InfoFromMaster_send_ports[instance_index]
+                                int(self.rt_udp_InfoFromMaster_send_ports[instance_index])
                             )
                             instance_index += 1
                             if instance_index >= len(self.rt_udp_InfoFromMaster_send_addrs):
