@@ -102,14 +102,16 @@ class DelayRetransmitterMain:
                 raise RuntimeError("cannot have negative delay")
             self.rt_udp_InfoFromMaster_send_delay.append(int(self.config['retransmit_delay'][i] * 1E9))
 
-        self.rt_udp_InfoFromMaster_send_delay, \
-            self.rt_udp_InfoFromMaster_send_addrs, \
-            self.rt_udp_InfoFromMaster_send_ports = \
-            zip(*sorted(
-                zip(self.rt_udp_InfoFromMaster_send_delay,
-                    self.rt_udp_InfoFromMaster_send_addrs,
-                    self.rt_udp_InfoFromMaster_send_ports)
-            ))
+        sort_ind = sorted(range(len(self.rt_udp_InfoFromMaster_send_delay)),
+                          key=self.rt_udp_InfoFromMaster_send_delay.__getitem__)
+        self.rt_udp_InfoFromMaster_send_delay = np.array(self.rt_udp_InfoFromMaster_send_delay)[sort_ind]
+        self.rt_udp_InfoFromMaster_send_addrs = np.array(self.rt_udp_InfoFromMaster_send_addrs)[sort_ind]
+        self.rt_udp_InfoFromMaster_send_ports = np.array(self.rt_udp_InfoFromMaster_send_ports)[sort_ind]
+
+
+        print(self.rt_udp_InfoFromMaster_send_delay)
+        print(self.rt_udp_InfoFromMaster_send_addrs)
+        print(self.rt_udp_InfoFromMaster_send_ports)
 
         # wait for initial package for Master PC ip
         while not self.rt_from_master_recv_socket.hasPendingDatagrams():
