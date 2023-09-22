@@ -73,7 +73,7 @@ def tool_pose_transmitter_main(_name, _config):
                 arm1_str = "{} {} {} {} {} {} {} {}".format(arm1_t[0], arm1_t[1], arm1_t[2], arm1_r[1], arm1_r[2],
                                                             arm1_r[3], arm1_r[0], arm1_g)  # tx ty tz rx ry rz rw g
 
-                rospy.loginfo("Arm 1:"+str(arm1_t))
+                # rospy.loginfo("Arm 1:"+str(arm1_t))
 
                 arm2_pose = arm_interface_list[1].get_pose()
                 arm2_t = 1000 * dql.translation(arm2_pose).vec3()  # tx ty tz, In millimeters
@@ -81,7 +81,7 @@ def tool_pose_transmitter_main(_name, _config):
                 arm2_g = manipulator2.get_gripper()  # gripper range [0,1]
                 arm2_str = "{} {} {} {} {} {} {} {}".format(arm2_t[0], arm2_t[1], arm2_t[2], arm2_r[1], arm2_r[2],
                                                             arm2_r[3], arm2_r[0], arm2_g)  # tx ty tz rx ry rz rw g
-                rospy.loginfo("Arm 2:"+str(arm2_t))
+                # rospy.loginfo("Arm 2:"+str(arm2_t))
 
                 # {} vec8
                 # () vec4 P()

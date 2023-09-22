@@ -7,7 +7,7 @@
             retransmit_ips: ["127.0.0.1", "192.168.0.3"]
             retransmit_ps_ports: [2222, 2223]
             retransmit_os_ports: [2221, 2223]
-            retransmit_delay: [0, 0.0]
+            retransmit_delay: [0, 5.0]
             retransmit_to_master_select: [True, False]
         </rosparam>
     </node>
