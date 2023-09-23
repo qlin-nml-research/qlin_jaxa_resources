@@ -15,7 +15,7 @@ This file is part of jaxa_resources.
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with adaptive_control_example.  If not, see <http://www.gnu.org/licenses/>.
+    along with qlin_jaxa_resources.  If not, see <http://www.gnu.org/licenses/>.
 
 Author:
     Hung-Ching Lin (qlin1806@g.ecc.u-tokyo.ac.jp)
