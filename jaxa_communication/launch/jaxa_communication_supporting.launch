@@ -1,4 +1,0 @@
-<launch>
-    <include file="$(find jaxa_communication)/launch/tool_pose_udp_transmitter.launch"/>
-    <include file="$(find jaxa_communication)/launch/manipulator_delay_retransmitter.launch"/>
-</launch>
