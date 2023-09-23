@@ -1,6 +1,28 @@
 #!/usr/bin/python3
-import math
+"""
+(C) Copyright Hung-Ching Lin
 
+This file is part of jaxa_resources.
+
+    qlin_jaxa_resources is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    qlin_jaxa_resources is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with adaptive_control_example.  If not, see <http://www.gnu.org/licenses/>.
+
+Author:
+    Hung-Ching Lin (qlin1806@g.ecc.u-tokyo.ac.jp)
+
+Contributors (aside from author):
+"""
+import math
 import numpy as np
 import rospy
 import os, sys, time, datetime, traceback
@@ -108,7 +130,6 @@ class DelayRetransmitterMain:
         self.rt_udp_InfoFromMaster_send_addrs = np.array(self.rt_udp_InfoFromMaster_send_addrs)[sort_ind]
         self.rt_udp_InfoFromMaster_send_ports = np.array(self.rt_udp_InfoFromMaster_send_ports)[sort_ind]
 
-
         print(self.rt_udp_InfoFromMaster_send_delay)
         print(self.rt_udp_InfoFromMaster_send_addrs)
         print(self.rt_udp_InfoFromMaster_send_ports)
@@ -166,10 +187,6 @@ class DelayRetransmitterMain:
                                 self.rt_udp_InfoFromMaster_buffer.pop()
                                 break
 
-                    # self.rt_udp_InfoFromMaster_buffer.pop_timeout(time_now) # should not be needed
-                    # rospy.loginfo("current len:"+str(self.rt_udp_InfoFromMaster_buffer.len()))
-                    # rospy.loginfo("oldest time:"+str((time_now-self.rt_udp_InfoFromMaster_buffer.buffer[0][0])/1e9))
-
                 # selected sub-instance to Master PC
                 if self.rt_to_master_recv_socket.hasPendingDatagrams():
                     # rospy.loginfo("[" + rospy.get_name() + "]::got info to master")
@@ -203,16 +220,6 @@ if __name__ == '__main__':
         config['retransmit_os_ports'] = params['retransmit_os_ports']
         config['retransmit_delay'] = params['retransmit_delay']
         config['retransmit_to_master_select'] = params['retransmit_to_master_select']
-
-        """
-            patient_side_port: 2220
-            operator_side_port: 2220
-            retransmit_ips: ["127.0.0.1", "10.198.113.184"]
-            retransmit_ps_ports: [2221, 2223]
-            retransmit_os_ports: [2221, 2223]
-            retransmit_delay: [0, 1]
-            retransmit_to_master_select: [false, true]
-        """
 
         rospy.loginfo("[" + name + "]:: Parameter load OK.")
     except Exception as e:
