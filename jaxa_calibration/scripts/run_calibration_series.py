@@ -174,6 +174,10 @@ if __name__ == '__main__':
                     rotation_list.append(rotation_init * delta_r)
 
         translation_list = [translation_init]
+        _config['pose_list'] = _pose_list
+        t_offsets = pose_gen_params["t_offsets"]
+        for offset in t_offsets:
+            translation_list.append(translation_init+dql.DQ(offset))
 
         _pose_list = []
         for t in translation_list:
