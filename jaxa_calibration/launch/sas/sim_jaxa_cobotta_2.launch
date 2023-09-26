@@ -1,0 +1,10 @@
+<launch>
+<node pkg="sas_robot_driver" type="sas_robot_driver_ros_composer_node" name="arm2">
+<rosparam file="$(find jaxa_calibration)/cfg/sim_jaxa_cobotta_2_calibration.yaml" command="load"/>
+<!-- Use Enviroment Variable -->
+<rosparam subst_value="true">
+    vrep_ip: $(env VREP_IP)
+    robot_parameter_file_path: $(env ROBOT_2_MD_JSON_PATH)
+</rosparam>
+</node>
+</launch>

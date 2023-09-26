@@ -1,0 +1,11 @@
+<launch>
+
+<include file="$(find jaxa_ros_control)/launch/sas_robot_driver_denso_cobotta_1.launch"/>
+<include file="$(find jaxa_ros_control)/launch/sas_robot_driver_denso_cobotta_2.launch"/>
+
+<include file="$(find jaxa_calibration)/launch/sas/jaxa_cobotta_1.launch"/>
+<include file="$(find jaxa_calibration)/launch/sas/jaxa_cobotta_2.launch"/>
+
+<include file="$(find jaxa_calibration)/launch/sas/sas_robot_kinematics_constrained_multiarm.launch"/>
+
+</launch>

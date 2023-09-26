@@ -1,0 +1,18 @@
+thread_sampling_time_nsec: 4000000
+n: 80.0
+n_d: 20.0
+damping: 0.001
+damping_secondary: 0.0000001
+damping_secondary_labels: ["0_1","0_0"]
+alpha: 0.8
+alpha_secondary: 0.8
+enable_initial_angle_limit: false
+master_device_labels: ["0_1","0_0"]
+###master_device_labels: ["0_1_delay","0_0_delay"]
+robot_driver_interface_node_prefixes: ["/arm1/","/arm2/"]
+robot_kinematics_provider_prefixes: ["/arm1_kinematics/","/arm2_kinematics/"]
+# This value is replaced by the enviroment variables described in the launch file
+robot_parameter_file_paths: ["dummy.json"]
+"vrep_port": 19998
+# This value is replaced by the enviroment variable VREP_IP
+"vrep_ip": "0.0.0.0"

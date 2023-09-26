@@ -1,0 +1,12 @@
+"thread_sampling_time_nsec": 4000000
+"use_real_robot": false
+"robot_driver_interface_node_prefixes": []
+#Vrep Parameters
+"vrep_port": 20010
+"vrep_dynamically_enabled": false
+"vrep_robot_joint_names": ["CVR038_joint1","CVR038_joint2","CVR038_joint3","CVR038_joint4","CVR038_joint5","CVR038_joint6"]
+
+# This value is replaced by the enviroment variable VREP_IP
+"vrep_ip": "0.0.0.0"
+# This value is replaced by the enviroment variable ROBOT_1_JSON_PATH
+"robot_parameter_file_path": "dummy.json"

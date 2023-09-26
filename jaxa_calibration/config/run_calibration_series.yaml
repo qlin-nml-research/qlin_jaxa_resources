@@ -1,0 +1,30 @@
+update_rate: 30
+
+arm_1_ns: "/arm1_kinematics/"
+arm_2_ns: "/arm2_kinematics/"
+
+vrep_port: 19997
+vrep_x_names: ["x1", "x2"]
+vrep_xd_names: ["xd1", "xd2"]
+
+
+t_threshold: 0.0001
+r_threshold: 0.003
+
+
+# define calibration arm number
+calibrating_arm_num: 0
+pose_log_txt_path: $(find jaxa_calibration)/log/pose_list.txt
+
+pose_generation_params:
+  r_init: [0, 7.07106781e-01, 0, 7.07106781e-01]
+  rot_d:
+#    i: 10
+    j: 10
+    k: 10
+  t_init: [-0.04608017135972464, -0.15465771533997513, 0.35987697134938057]
+
+
+
+
+
