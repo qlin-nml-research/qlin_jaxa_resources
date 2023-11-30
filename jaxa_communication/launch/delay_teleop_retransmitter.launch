@@ -22,20 +22,22 @@
 <!--    None-->
 <launch>
     <node pkg="jaxa_communication" type="udp_delay_retransmitter.py"
-          name="to_patient_side_retransmitter_node" required="true">
+          name="to_patient_side_retransmitter_node" required="true" clear_params="true">
         <rosparam subst_value="true">
             receiving_port: 2220
             retransmit_ips: ["127.0.0.1", "10.198.113.140"]
             retransmit_ports: [2222, 2223]
             retransmit_delay: [0, 5.0]
+<!--             enable_logging_to_path: $(find jaxa_communication)/log/11_20_test_random_move.udp_log -->
+            replay_file: $(find jaxa_communication)/log/11_20_test_random_move.udp_log
         </rosparam>
     </node>
     <node pkg="jaxa_communication" type="udp_delay_retransmitter.py"
-      name="to_operator_side_retransmitter_node" required="true">
+      name="to_operator_side_retransmitter_node" required="true" clear_params="true">
         <rosparam subst_value="true">
             receiving_port: 2221
             <!--master PC ip -->
-            retransmit_ips: ["127.0.0.1"]
+            retransmit_ips: ["10.198.113.155"]
             <!--master PC ip -->
             retransmit_ports: [2223]
             retransmit_delay: [0]
