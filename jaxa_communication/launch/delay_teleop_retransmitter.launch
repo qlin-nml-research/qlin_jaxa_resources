@@ -28,8 +28,8 @@
             retransmit_ips: ["127.0.0.1", "10.198.113.140"]
             retransmit_ports: [2222, 2223]
             retransmit_delay: [0, 5.0]
-<!--             enable_logging_to_path: $(find jaxa_communication)/log/11_20_test_random_move.udp_log -->
-            replay_file: $(find jaxa_communication)/log/11_20_test_random_move.udp_log
+<!--             enable_logging_to_path: $(find jaxa_communication)/log/11_20_test_random_move-2.udp_log -->
+            replay_file: $(find jaxa_communication)/log/11_20_test_random_move-2.udp_log
         </rosparam>
     </node>
     <node pkg="jaxa_communication" type="udp_delay_retransmitter.py"
