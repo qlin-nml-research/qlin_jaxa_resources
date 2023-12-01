@@ -34,7 +34,7 @@ from collections import deque
 import pickle
 import tqdm
 
-DISABLE_MAX_RATE=True
+DISABLE_MAX_RATE=False
 
 
 class DataFIFOBuffer:
