@@ -1,0 +1,3 @@
+[submodule "raspi_force_sensor_reciever"]
+	path = raspi_force_sensor_reciever
+	url = git@gitlab.com:NML/utilities/raspi_force_sensor_reciever.git
