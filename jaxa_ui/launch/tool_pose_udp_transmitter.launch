@@ -1,0 +1,36 @@
+<!--(C) Copyright Hung-Ching Lin-->
+
+<!--This file is part of jaxa_resources.-->
+
+<!--    qlin_jaxa_resources is free software: you can redistribute it and/or modify-->
+<!--    it under the terms of the GNU Lesser General Public License as published by-->
+<!--    the Free Software Foundation, either version 3 of the License, or-->
+<!--    (at your option) any later version.-->
+
+<!--    qlin_jaxa_resources is distributed in the hope that it will be useful,-->
+<!--    but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--    GNU Lesser General Public License for more details.-->
+
+<!--    You should have received a copy of the GNU Lesser General Public License-->
+<!--    along with qlin_jaxa_resources.  If not, see <http://www.gnu.org/licenses/>.-->
+
+<!--Author:-->
+<!--    Hung-Ching Lin (qlin1806@g.ecc.u-tokyo.ac.jp)-->
+
+<!--Contributors (aside from author):-->
+<!--    Saúl Alexis Heredia Pérez-->
+<launch>
+    <node pkg="jaxa_communication" type="tool_pose_udp_transmitter.py"
+          name="tool_pose_udp_transmitter_node" required="true">
+        <rosparam subst_value="true">
+            rate: 30
+            port: 20023
+            remote_ip: 10.198.113.183
+            arm1_manipulator_ns: 0_1
+            arm1_kinematics_ns: /arm1_kinematics
+            arm2_manipulator_ns: 0_0
+            arm2_kinematics_ns: /arm2_kinematics
+        </rosparam>
+    </node>
+</launch>

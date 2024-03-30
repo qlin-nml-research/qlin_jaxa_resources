@@ -1,0 +1,46 @@
+<!--(C) Copyright Hung-Ching Lin-->
+
+<!--This file is part of jaxa_resources.-->
+
+<!--    qlin_jaxa_resources is free software: you can redistribute it and/or modify-->
+<!--    it under the terms of the GNU Lesser General Public License as published by-->
+<!--    the Free Software Foundation, either version 3 of the License, or-->
+<!--    (at your option) any later version.-->
+
+<!--    qlin_jaxa_resources is distributed in the hope that it will be useful,-->
+<!--    but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--    GNU Lesser General Public License for more details.-->
+
+<!--    You should have received a copy of the GNU Lesser General Public License-->
+<!--    along with qlin_jaxa_resources.  If not, see <http://www.gnu.org/licenses/>.-->
+
+<!--Author:-->
+<!--    Hung-Ching Lin (qlin1806@g.ecc.u-tokyo.ac.jp)-->
+
+<!--Contributors (aside from author):-->
+<!--    None-->
+<launch>
+    <node pkg="jaxa_communication" type="udp_delay_retransmitter.py"
+          name="to_patient_side_retransmitter_node" required="true" clear_params="true">
+        <rosparam subst_value="true">
+            receiving_port: 2220
+            retransmit_ips: ["127.0.0.1", "192.168.0.3"]
+            retransmit_ports: [2222, 2223]
+            retransmit_delay: [0, 1.0]
+<!--             enable_logging_to_path: $(find jaxa_communication)/log/11_20_test_random_move-2.udp_log -->
+<!--             replay_file: $(find jaxa_communication)/log/11_20_test_random_move-2.udp_log -->
+        </rosparam>
+    </node>
+    <node pkg="jaxa_communication" type="udp_delay_retransmitter.py"
+      name="to_operator_side_retransmitter_node" required="true" clear_params="true">
+        <rosparam subst_value="true">
+            receiving_port: 2221
+            <!--master PC ip -->
+            retransmit_ips: ["192.168.0.4"]
+            <!--master PC ip -->
+            retransmit_ports: [2220]
+            retransmit_delay: [0]
+        </rosparam>
+    </node>
+</launch>
