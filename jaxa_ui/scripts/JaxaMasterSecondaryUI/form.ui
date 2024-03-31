@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>896</width>
-    <height>574</height>
+    <width>864</width>
+    <height>591</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,28 +18,12 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>0</y>
+      <y>10</y>
       <width>856</width>
       <height>551</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="mainGridLayout">
-     <item row="0" column="1">
-      <widget class="QWidget" name="videoParentWidget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>640</width>
-         <height>360</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>1920</width>
-         <height>1080</height>
-        </size>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="3">
       <layout class="QGridLayout" name="metaInfoGridLayout">
        <property name="sizeConstraint">
@@ -49,7 +33,7 @@
         <number>10</number>
        </property>
        <item row="0" column="0">
-        <widget class="QProgressBar" name="progressBar">
+        <widget class="QProgressBar" name="dIndicator_arm1">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -65,7 +49,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="dIndicator_arm2_label">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -73,12 +57,12 @@
           </size>
          </property>
          <property name="text">
-          <string>TextLabel</string>
+          <string>Arm2</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QProgressBar" name="progressBar_2">
+        <widget class="QProgressBar" name="dIndicator_arm2">
          <property name="value">
           <number>24</number>
          </property>
@@ -88,7 +72,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="dIndicator_arm1_label">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -96,11 +80,55 @@
           </size>
          </property>
          <property name="text">
-          <string>TextLabel</string>
+          <string>Arm1</string>
          </property>
         </widget>
        </item>
       </layout>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="videoMetaLabel">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>1920</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="videoImageLabel">
+       <property name="minimumSize">
+        <size>
+         <width>640</width>
+         <height>360</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>1920</width>
+         <height>1080</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>IMAGE_LABEL</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
