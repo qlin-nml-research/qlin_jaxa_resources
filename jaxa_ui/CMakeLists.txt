@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(jaxa_communication)
+project(jaxa_ui)
 
 
 
@@ -35,7 +35,7 @@ catkin_package(
   CATKIN_DEPENDS
     rospy
     std_msgs
-  LIBRARIES jaxa_communication
+  LIBRARIES jaxa_ui
 )
 
 

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>jaxa_communication</name>
+  <name>jaxa_ui</name>
   <version>0.0.0</version>
-  <description>The jaxa_communication package</description>
+  <description>The jaxa_ui package</description>
 
   <maintainer email="qlin1806m@gmail.com">qlin1806</maintainer>
   <license>GPLv2</license>
