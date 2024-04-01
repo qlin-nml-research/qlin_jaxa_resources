@@ -44,9 +44,17 @@ from tools import AsyncVideoCapture, InfoReceiver
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+RUN_CONFIG = {
+    "video_device": 0,
+    "kin_info_receiver_port": 20034,
+    "img_display_size": (960, 540),
+    "default_workspace_plane_depth": 0.7,
+}
+
+
 
 class MainWindow(QMainWindow):
-    def __init__(self, video_device, kin_info_receiver, parent=None):
+    def __init__(self, video_device, kin_info_receiver, config, parent=None):
         super().__init__(parent)
         logger.info(f"MainWindow::init::initializing")
         self.ui = Ui_MainWindow()
@@ -60,7 +68,10 @@ class MainWindow(QMainWindow):
         self.frame_time = time.perf_counter()
         # create video image display label
         # self.image_label = self.ui.videoImageLabel
-        self.im_display_size = (640, 360)
+        if "img_display_size" in config:
+            self.im_display_size = config["img_display_size"]
+        else:
+            self.im_display_size = (640, 360)
 
         #####################################
         # kinematics info receiver
@@ -115,12 +126,14 @@ class MainWindow(QMainWindow):
             self.frame_counter += 1
 
 
+
+
+
 if __name__ == "__main__":
-    tool_info_reciever_port = 20034
 
     # testing
-    cap = AsyncVideoCapture(0)
-    info_receiver = InfoReceiver(tool_info_reciever_port, blocking=True)
+    cap = AsyncVideoCapture(RUN_CONFIG["video_device"])
+    info_receiver = InfoReceiver(RUN_CONFIG["kin_info_receiver_port"], blocking=True)
     # info_receiver = None
 
     # cap = AsyncDecklinkCapture(0)
