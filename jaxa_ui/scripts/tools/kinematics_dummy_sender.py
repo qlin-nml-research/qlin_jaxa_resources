@@ -3,6 +3,8 @@ import time
 import dqrobotics as dql
 import numpy as np
 
+from dqrobotics.interfaces.vrep import DQ_VrepInterface
+
 import random
 
 TARGET_RATE = 10
@@ -26,6 +28,13 @@ arm_center_t = dql.DQ([0, 0, 0.4])
 arm_center_r = dql.DQ([1, 0, 0, 0])
 arm_center_x = arm_center_r + 0.5 * dql.E_ * arm_center_t * arm_center_r
 
+vrep_ip = "127.0.0.1"
+vrep_port = 20000
+
+camera_name = "y_camera"
+ee_names = ["xd1", "xd2"]
+
+
 
 def generate_random_pose_with_center_pose(center_pose: dql.DQ, t_range: np.ndarray, r_range: np.ndarray):
     center_t = dql.translation(center_pose).vec3()
@@ -43,17 +52,26 @@ def main():
     socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     socket_.connect((target_ip, target_port))
 
+    vrep = DQ_VrepInterface()
+    if not vrep.connect(vrep_ip, vrep_port, 100, 10):
+        print("Failed to connect to V-REP")
+        return
+
+
     print(f"Connected to {target_ip}:{target_port}")
     counter = 0
 
     while True:
         time.sleep(1 / TARGET_RATE)
 
-        xs_ = [
-            generate_random_pose_with_center_pose(arm_center_x, tool_t_random_range, tool_r_random_range),
-            generate_random_pose_with_center_pose(arm_center_x, tool_t_random_range, tool_r_random_range)
-        ]
-        cam_x_ = generate_random_pose_with_center_pose(camera_center_x, cam_t_random_range, cam_r_random_range)
+        # xs_ = [
+        #     generate_random_pose_with_center_pose(arm_center_x, tool_t_random_range, tool_r_random_range),
+        #     generate_random_pose_with_center_pose(arm_center_x, tool_t_random_range, tool_r_random_range)
+        # ]
+        # cam_x_ = generate_random_pose_with_center_pose(camera_center_x, cam_t_random_range, cam_r_random_range)
+
+        xs_ = [vrep.get_object_pose(ee_name) for ee_name in ee_names]
+        cam_x_ = vrep.get_object_pose(camera_name)
 
         cam_x = dql.DQ([1])
         xs = [cam_x_ * arm_x for arm_x in xs_]

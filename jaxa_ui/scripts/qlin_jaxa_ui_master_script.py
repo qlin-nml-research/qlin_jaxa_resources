@@ -48,9 +48,9 @@ RUN_CONFIG = {
     "video_device": 0,
     "kin_info_receiver_port": 20034,
     "img_display_size": (960, 540),
-    "default_workspace_plane_depth": 0.7,
+    "default_workspace_plane_depth_max": 0.49,
+    "default_workspace_plane_depth_min": 0.25,
 }
-
 
 
 class MainWindow(QMainWindow):
@@ -59,6 +59,7 @@ class MainWindow(QMainWindow):
         logger.info(f"MainWindow::init::initializing")
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.config = config
 
         #####################################
         # video related
@@ -72,6 +73,7 @@ class MainWindow(QMainWindow):
             self.im_display_size = config["img_display_size"]
         else:
             self.im_display_size = (640, 360)
+        self.ui.videoMetaLabel.setBaseSize(*self.im_display_size)
 
         #####################################
         # kinematics info receiver
@@ -109,6 +111,21 @@ class MainWindow(QMainWindow):
             return
         logger.info(f"MainWindow::update_kin_info::updating kin info")
         x1, x2, cam = self.kin_info_receiver.get_kin_info()
+        depths_ = [_get_pose_depth_from_camera(cam, x) for x in [x1, x2]]
+        # print(f"depths: {depths_}")
+
+        for i, (depth, dIndicatorDepth_label, dIndicator_label, dIndicator_pbar) \
+                in enumerate(zip(depths_,
+                                 [self.ui.dIndicatorDepth_arm1_label, self.ui.dIndicatorDepth_arm2_label],
+                                 [self.ui.dIndicator_arm1_label, self.ui.dIndicator_arm2_label],
+                                 [self.ui.dIndicator_arm1, self.ui.dIndicator_arm2])):
+            dIndicatorDepth_label.setText(f"Depth: {depth * 100:.2f}")
+            d_to_table = self.config["default_workspace_plane_depth_max"] - depth
+            p_val = int(100 * d_to_table / (self.config["default_workspace_plane_depth_max"] - self.config[
+                "default_workspace_plane_depth_min"]))
+            dIndicator_label.setText(f"{p_val}%")
+            p_val = min(max(p_val, 0), 100)
+            dIndicator_pbar.setValue(p_val)
 
         # self.ui.kinInfoLabel.setText(f"x1: {x1}, x2: {x2}, cam: {cam}")
 
@@ -122,11 +139,14 @@ class MainWindow(QMainWindow):
             ctime = time.perf_counter()
             fps = 1.0 / (ctime - self.frame_time)
             self.frame_time = ctime
-            self.ui.videoMetaLabel.setText(f"Frame: {self.frame_counter}, FPS: {fps:.2f}")
+            self.ui.videoMetaLabel.setText(f"Size:{self.im_display_size},\tFPS: {fps:>6.2f},\tframe#:{self.frame_counter}")
             self.frame_counter += 1
 
 
-
+def _get_pose_depth_from_camera(cam_pose: dql.D, x_pose: dql.DQ):
+    x_relative = dql.conj(cam_pose) * x_pose
+    x_t = dql.translation(x_relative).vec3()
+    return x_t[2]
 
 
 if __name__ == "__main__":
@@ -139,7 +159,7 @@ if __name__ == "__main__":
     # cap = AsyncDecklinkCapture(0)
     app = QApplication(sys.argv)
     try:
-        widget = MainWindow(video_device=cap, kin_info_receiver=info_receiver)
+        widget = MainWindow(video_device=cap, kin_info_receiver=info_receiver, config=RUN_CONFIG)
         widget.show()
     except Exception as e:
         print(e)
