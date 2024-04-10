@@ -22,6 +22,7 @@ Author:
 
 Contributors (aside from author):
 """
+import os
 import sys
 import time
 import dqrobotics as dql
@@ -39,19 +40,22 @@ import logging
 #     pyside2-uic form.ui -o ui_form.py
 from JaxaMasterSecondaryUI.ui_form import Ui_MainWindow
 
-from tools import AsyncVideoCapture, InfoReceiver
+from tools import AsyncVideoCapture, InfoReceiver, AsyncDecklinkCapture
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 RUN_CONFIG = {
     "video_device": 0,
-    "kin_info_receiver_port": 20034,
+    "kin_info_receiver_port": 23453,
     "img_display_size": (960, 540),
     "default_workspace_plane_depth_max": 0.49,
     "default_workspace_plane_depth_min": 0.25,
 }
-
+_decklink_params = {
+    "decklink_index": 3,
+    "display_mode_index": -1,
+}
 
 class MainWindow(QMainWindow):
     def __init__(self, video_device, kin_info_receiver, config, parent=None):
@@ -139,7 +143,8 @@ class MainWindow(QMainWindow):
             ctime = time.perf_counter()
             fps = 1.0 / (ctime - self.frame_time)
             self.frame_time = ctime
-            self.ui.videoMetaLabel.setText(f"Size:{self.im_display_size},\tFPS: {fps:>6.2f},\tframe#:{self.frame_counter}")
+            self.ui.videoMetaLabel.setText(
+                f"Size:{self.im_display_size},\tFPS: {fps:>6.2f},\tframe#:{self.frame_counter}")
             self.frame_counter += 1
 
 
@@ -152,7 +157,8 @@ def _get_pose_depth_from_camera(cam_pose: dql.D, x_pose: dql.DQ):
 if __name__ == "__main__":
 
     # testing
-    cap = AsyncVideoCapture(RUN_CONFIG["video_device"])
+    # cap = AsyncVideoCapture(RUN_CONFIG["video_device"])
+    cap = AsyncDecklinkCapture(device_param=_decklink_params)
     info_receiver = InfoReceiver(RUN_CONFIG["kin_info_receiver_port"], blocking=True)
     # info_receiver = None
 

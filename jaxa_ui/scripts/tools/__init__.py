@@ -1,2 +1,3 @@
 from .async_cv2_capturedevice import AsyncVideoCapture
+from .async_decklink_capturedevice import AsyncDecklinkCapture
 from .kinematics_info_reciever import InfoReceiver
