@@ -26,7 +26,7 @@
         <rosparam subst_value="true">
             rate: 30
             port: 20023
-            remote_ip: 10.198.113.183
+            remote_ip: $(env LOCAL_VR_PC_IP)
             arm1_manipulator_ns: 0_1
             arm1_kinematics_ns: /arm1_kinematics
             arm2_manipulator_ns: 0_0

@@ -25,7 +25,7 @@
           name="to_patient_side_retransmitter_node" required="true" clear_params="true">
         <rosparam subst_value="true">
             receiving_port: 2220
-            retransmit_ips: ["127.0.0.1", "192.168.0.3"]
+            retransmit_ips: ["127.0.0.1", $(env REMOTE_ROBOT_PC_IP)]
             retransmit_ports: [2222, 2223]
             retransmit_delay: [0, 1.0]
 <!--             enable_logging_to_path: $(find jaxa_communication)/log/11_20_test_random_move-2.udp_log -->
@@ -37,7 +37,7 @@
         <rosparam subst_value="true">
             receiving_port: 2221
             <!--master PC ip -->
-            retransmit_ips: ["192.168.0.4"]
+            retransmit_ips: [$(env LOCAL_LEADER_PC_IP)]
             <!--master PC ip -->
             retransmit_ports: [2220]
             retransmit_delay: [0]

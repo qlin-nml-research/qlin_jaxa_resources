@@ -26,7 +26,7 @@
         <rosparam subst_value="true">
             receiving_port: 21044
             <!--master PC ip -->
-            retransmit_ips: ["192.168.0.20"]
+            retransmit_ips: [$(env LOCAL_ROBOT_PC_IP)]
             <!--master PC ip -->
             retransmit_ports: [21044]
             retransmit_delay: [0.0]
