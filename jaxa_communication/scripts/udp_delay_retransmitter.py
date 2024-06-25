@@ -41,15 +41,15 @@ if NOT_ROS:
     log_error = logger.error
     log_warn = logger.warning
     log_info = logger.info
-    get_name = lambda: "udp teleop re-transmitter"
+    def get_name(): return "udp teleop re-transmitter"
     get_nsec = time.perf_counter_ns
-    is_shutdown = lambda: False
+    def is_shutdown(): return False
 else:
     log_error = rospy.logerr
     log_warn = rospy.logwarn
     log_info = rospy.loginfo
     get_name = rospy.get_name
-    get_nsec = lambda: rospy.Time.now().to_nsec()
+    def get_nsec(): return rospy.Time.now().to_nsec()
     is_shutdown = rospy.is_shutdown
 
 import math
