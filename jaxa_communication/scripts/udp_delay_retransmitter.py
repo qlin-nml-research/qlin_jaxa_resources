@@ -299,15 +299,15 @@ NON_ROS_INIT_PARAM = {
 
 MAX_RATE = 2000
 if __name__ == '__main__':
-    if not NOT_ROS:
+    if NOT_ROS:
+        name = get_name()
+        params = NON_ROS_INIT_PARAM
+    else:
         rospy.init_node("manipulator_delay_retransmitter_node",
                         disable_signals=True,
                         anonymous=False)
         name = get_name()
         params = rospy.get_param(name)
-    else:
-        name = get_name()
-        params = NON_ROS_INIT_PARAM
 
     config = {}
 
