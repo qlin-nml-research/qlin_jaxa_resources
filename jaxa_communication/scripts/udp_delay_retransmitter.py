@@ -49,7 +49,7 @@ else:
     log_warn = rospy.logwarn
     log_info = rospy.loginfo
     get_name = rospy.get_name
-    get_nsec = rospy.Time.now().to_nsec
+    get_nsec = lambda: rospy.Time.now().to_nsec()
     is_shutdown = rospy.is_shutdown
 
 import math
