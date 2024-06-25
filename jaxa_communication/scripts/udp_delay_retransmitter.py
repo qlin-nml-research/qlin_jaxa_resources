@@ -22,9 +22,38 @@ Author:
 
 Contributors (aside from author):
 """
+try:
+    import rospy
+
+    NOT_ROS = False
+except ImportError:
+    import logging
+
+    logging.warning("rospy not found, using logging module")
+    NOT_ROS = True
+
+# setup logger retargeting
+if NOT_ROS:
+    import time
+
+    logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger(__name__)
+    log_error = logger.error
+    log_warn = logger.warning
+    log_info = logger.info
+    get_name = lambda: "udp teleop re-transmitter"
+    get_nsec = time.perf_counter_ns
+    is_shutdown = lambda: False
+else:
+    log_error = rospy.logerr
+    log_warn = rospy.logwarn
+    log_info = rospy.loginfo
+    get_name = rospy.get_name
+    get_nsec = rospy.Time.now().to_nsec
+    is_shutdown = rospy.is_shutdown
+
 import math
 import numpy as np
-import rospy
 import os, sys, time, datetime, traceback
 
 from PyQt5.QtCore import QByteArray, qChecksum, QDataStream, QIODevice, QBuffer
@@ -33,8 +62,9 @@ from PyQt5.QtNetwork import QUdpSocket, QHostAddress
 from collections import deque
 import pickle
 import tqdm
+from utils import RateManager
 
-DISABLE_MAX_RATE=False
+DISABLE_MAX_RATE = False
 
 
 class DataFIFOBuffer:
@@ -65,8 +95,8 @@ class DataFIFOBuffer:
 def send_data_over_udp(udp_send_sock: QUdpSocket, udp_send_addr: QHostAddress, data: QByteArray, port: int):
     ret = udp_send_sock.writeDatagram(data, udp_send_addr, port)
     if ret < 0:
-        rospy.logerr("[" + rospy.get_name() + "]:::UDP send failure.. to IP:" +
-                     str(udp_send_addr.toString()) + " Port:" + str(port))
+        log_error(f"[{get_name()}]:::UDP send failure.. to IP:" +
+                  str(udp_send_addr.toString()) + " Port:" + str(port))
 
 
 class Logger:
@@ -84,7 +114,7 @@ class Logger:
         print(len(self.data))
 
     def save(self):
-        rospy.logwarn("[" + rospy.get_name() + "]::Logger: saving to path: " + self.log_file_path)
+        log_warn(f"[{get_name()}]::Logger: saving to path: " + self.log_file_path)
         pickle.dump(self.data, self.log_f)
 
     def __del__(self):
@@ -95,10 +125,10 @@ class DelayRetransmitterMain:
     def __init__(self, _name, _config, rate):
         self.name = _name
         self.config = _config
-        rospy.logwarn("[" + rospy.get_name() + "]::Initializing")
+        log_warn(f"[{self.name}]::Initializing")
 
         if _config['enable_logging_to_path'] is not None:
-            rospy.logwarn("[" + rospy.get_name() + "]::Logger enabled")
+            log_warn(f"[{self.name}]::Logger enabled")
             self.logger = Logger(_config['enable_logging_to_path'])
         else:
             self.logger = None
@@ -110,14 +140,12 @@ class DelayRetransmitterMain:
             # reciving socket of the information Source
             self.rt_from_recv_socket = QUdpSocket()
             if self.rt_from_recv_socket.bind(self.rt_recv_addr, self.config['receiving_port']):
-                rospy.loginfo(
-                    "[" + rospy.get_name() + "]:::Receiver Listing on UDP Port: "
-                    + str(self.config['receiving_port']) + " IP: " + repr(self.rt_recv_addr)
-                    + " setup success"
+                log_info(
+                    f"[{self.name}]:::Receiver Listing on UDP Port: {self.config['receiving_port']} "
+                    f"IP: {repr(self.rt_recv_addr)} setup success"
                 )
             else:
-                rospy.logerr("[" + rospy.get_name() + "]:::UDP Port: "
-                             + str(self.config['receiving_port']) + " setup failed")
+                log_error(f"[{self.name}]:::UDP Port: {self.config['receiving_port']} setup failed")
                 raise RuntimeError("UDP cannot open")
 
         self.rt_max_delay = (max(self.config['retransmit_delay']) + 0.1) * 1E9
@@ -128,8 +156,8 @@ class DelayRetransmitterMain:
         for i, (rt_ip, rt_port) in enumerate(zip(self.config['retransmit_ips'], self.config['retransmit_ports'])):
             self.rt_udp_send_addrs.append(QHostAddress(rt_ip))
             self.rt_udp_send_ports.append(int(rt_port))
-            rospy.loginfo(
-                "[" + rospy.get_name() + "]:::Sending to ip: "
+            log_info(
+                f"[{self.name}]:::Sending to ip: "
                 + str(rt_ip) + " PORT: " + str(rt_port)
                 + " setup success"
             )
@@ -142,12 +170,11 @@ class DelayRetransmitterMain:
         self.rt_udp_send_delay = np.array(self.rt_udp_send_delay)[sort_ind]
         self.rt_udp_send_addrs = np.array(self.rt_udp_send_addrs)[sort_ind]
         self.rt_udp_send_ports = np.array(self.rt_udp_send_ports)[sort_ind]
-        rospy.loginfo("[" + rospy.get_name() + "]:::rt_udp_send_delay: " + str(self.rt_udp_send_delay))
-        rospy.loginfo("[" + rospy.get_name() + "]:::rt_udp_send_addrs: "
-                      + str([addr.toString() for addr in self.rt_udp_send_addrs]))
-        rospy.loginfo("[" + rospy.get_name() + "]:::rt_udp_send_ports: " + str(self.rt_udp_send_ports))
+        log_info(f"[{self.name}]:::rt_udp_send_delay: {self.rt_udp_send_delay}")
+        log_info(f"[{self.name}]:::rt_udp_send_addrs: {str([addr.toString() for addr in self.rt_udp_send_addrs])}")
+        log_info(f"[{self.name}]:::rt_udp_send_ports: {str(self.rt_udp_send_ports)}")
 
-        self.rate = rospy.Rate(rate)
+        self.rate = RateManager(rate)
         if _config['replay_file'] is None:
             # wait for initial package for Master PC ip
             while not self.rt_from_recv_socket.hasPendingDatagrams():
@@ -156,9 +183,8 @@ class DelayRetransmitterMain:
                 self.rt_from_recv_socket.pendingDatagramSize()
             )
             # ip of the Master Interface PC
-            rospy.loginfo(
-                "[" + rospy.get_name() + "]:::got Source PC IP: "
-                + str(self.source_addr.toString())
+            log_info(
+                f"[{self.name}]:::got Source PC IP: {self.source_addr.toString()}"
             )
 
     def spin_iter(self, time_now, udp_send_sock):
@@ -185,14 +211,14 @@ class DelayRetransmitterMain:
                     break
 
     def spin(self):
-        rospy.logwarn("[" + rospy.get_name() + "]::Running")
+        log_warn(f"[{self.name}]::Running")
         try:
             udp_send_sock = QUdpSocket()
-            s_time = rospy.Time.now().to_nsec()
+            s_time = get_nsec()
             counter = 0
 
-            while not rospy.is_shutdown():
-                time_now = rospy.Time.now().to_nsec() - s_time
+            while not is_shutdown():
+                time_now = get_nsec() - s_time
 
                 # Master PC to all sub-instance
                 """
@@ -209,9 +235,9 @@ class DelayRetransmitterMain:
                     self.spin_iter(time_now, udp_send_sock)
                 if not DISABLE_MAX_RATE:
                     self.rate.sleep()
-            rospy.loginfo("[" + self.name + "]:: Shutdown signal received")
+            log_info(f"[{self.name}]:: Shutdown signal received")
         except KeyboardInterrupt as e:
-            rospy.loginfo("[" + self.name + "]:: Exit on keyboard interrupt")
+            log_info(f"[{self.name}]:: Exit on keyboard interrupt")
 
         if self.logger is not None:
             self.logger.save()
@@ -220,55 +246,72 @@ class DelayRetransmitterMain:
         try:
             with open(replay_file, 'rb') as f:
                 log_data = pickle.load(f)
-            rospy.logwarn("[" + rospy.get_name() + "]::Enabling spin in replay mode: Duration: "
-                          + str(log_data[-1][0]/1E9) + " seconds")
+            log_warn(f"[{self.name}]::Enabling spin in replay mode: Duration: {str(log_data[-1][0] / 1E9)} seconds")
         except Exception as e:
-            rospy.logerr("[" + self.name + "]:: Replay Error: failed to read log file")
-        p_bar = tqdm.tqdm_gui(
-            desc="Replay Status",
-            total=len(log_data),
-            position=0,
-            leave=False
-        )
+            log_error(f"[{self.name}]:: Replay Error: failed to read log file")
         try:
             udp_send_sock = QUdpSocket()
-            s_time = rospy.Time.now().to_nsec()
             counter = 0
-
-            while not rospy.is_shutdown():
-                time_now = rospy.Time.now().to_nsec() - s_time
-
+            if USE_GUI_TQDM:
+                p_bar = tqdm.tqdm_gui(
+                    desc="Replay Status",
+                    total=len(log_data),
+                    position=0,
+                    leave=False
+                )
+            else:
+                p_bar = tqdm.tqdm(
+                    desc="Replay Status",
+                    total=len(log_data),
+                    position=0,
+                    leave=False
+                )
+            s_time = get_nsec()
+            log_warn(f"[{self.name}]::Start time: {s_time}")
+            while not is_shutdown():
+                time_now = get_nsec() - s_time
                 if log_data[counter][0] <= time_now:
                     counter += 1
                     p_bar.update(1)
                     if counter >= len(log_data):
                         p_bar.close()
-                        rospy.logwarn("[" + rospy.get_name() + "]::End of replay file")
+                        log_warn(f"[{self.name}]::End of replay file")
                         break
                     self.rt_udp_buffer.append(time_now, log_data[counter][1])
                     self.spin_iter(time_now, udp_send_sock)
                 if not DISABLE_MAX_RATE:
                     self.rate.sleep()
-            rospy.loginfo("[" + self.name + "]:: Shutdown signal received")
+            log_info(f"[{self.name}]:: Shutdown signal received")
         except KeyboardInterrupt as e:
-            rospy.loginfo("[" + self.name + "]:: Exit on keyboard interrupt")
+            log_info(f"[{self.name}]:: Exit on keyboard interrupt")
 
         p_bar.close()
 
+
+USE_GUI_TQDM = False
+
+NON_ROS_INIT_PARAM = {
+    "retransmit_ips": ["10.198.113.140"],
+    "retransmit_ports": [2223],
+    "retransmit_delay": [0],
+    "replay_file": "../log/11_20_test_random_move-2.udp_log",
+}
+
 MAX_RATE = 2000
 if __name__ == '__main__':
-
-    rospy.init_node("manipulator_delay_retransmitter_node",
-                    disable_signals=True,
-                    anonymous=False)
-
-    name = rospy.get_name()
-    params = rospy.get_param(name)
+    if not NOT_ROS:
+        rospy.init_node("manipulator_delay_retransmitter_node",
+                        disable_signals=True,
+                        anonymous=False)
+        name = get_name()
+        params = rospy.get_param(name)
+    else:
+        name = get_name()
+        params = NON_ROS_INIT_PARAM
 
     config = {}
 
     try:
-        config['receiving_port'] = params['receiving_port']
         config['retransmit_ips'] = params['retransmit_ips']
         config['retransmit_ports'] = params['retransmit_ports']
         config['retransmit_delay'] = params['retransmit_delay']
@@ -280,25 +323,29 @@ if __name__ == '__main__':
         if config['replay_file'] is not None:
             assert config['enable_logging_to_path'] is None, "Logging cannot be enabled if set to replay"
             assert os.path.isfile(config['replay_file']), "Defined replay file is not a file"
+        else:
+            config['receiving_port'] = params['receiving_port']
 
-        rospy.loginfo("[" + name + "]:: Parameter load OK.")
+        log_info(f"[{name}]:: Parameter load OK.")
     except Exception as e:
 
-        rospy.logerr(name + ": initialization ERROR on parameters")
-        rospy.logerr(name + ": " + str(e))
-        rospy.signal_shutdown(name + ": initialization ERROR on parameters")
+        log_error(f"[{name}]:: initialization ERROR on parameters")
+        log_error(f"[{name}]:: WHAT:{e}")
+        if not NOT_ROS:
+            rospy.signal_shutdown(name + ": initialization ERROR on parameters")
         exit()
-
-    namespace = rospy.get_namespace()
 
     main_h = DelayRetransmitterMain(_name=name, _config=config, rate=MAX_RATE)
 
     if config['replay_file'] is not None:
         main_h.replay_spin(config['replay_file'])
     else:
+        if NOT_ROS:
+            log_error(f"[{get_name()}]::ROS not found, cannot run in non-replay mode")
+            raise RuntimeError("ROS not found")
         main_h.spin()
 
-    rospy.logwarn("[" + rospy.get_name() + "]::Safe exit")
+    log_warn(f"[{get_name()}]::Safe exit")
 
     # # delete parameter on exit
     # rospy.delete_param(os.path.join(name, "enable_logging_to_path"))
