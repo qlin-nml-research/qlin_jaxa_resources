@@ -103,9 +103,11 @@ class TeleopKinematicsReceiver:
         self.flip_gripper = _config["flip_gripper"]
 
         # wait for all interface enabled
-        enabled_check_list = self.gripper_drivers + self.kinematics_interfaces
-        while not all([x.is_enabled() for x in enabled_check_list]):
-            rospy.loginfo(f"[{self.name}]::Waiting for all interfaces to be enabled")
+        # while not all([x.is_enabled() for x in self.gripper_drivers]):
+        #     rospy.loginfo(f"[{self.name}]::Waiting for gripper_drivers interfaces to be enabled")
+        #     rospy.sleep(1)
+        while not all([x.is_enabled() for x in self.kinematics_interfaces]):
+            rospy.loginfo(f"[{self.name}]::Waiting for kinematics interfaces to be enabled")
             rospy.sleep(1)
         rospy.logwarn(f"[{self.name}]::All interfaces enabled")
 
@@ -130,30 +132,34 @@ class TeleopKinematicsReceiver:
                 rospy.logerr("[" + rospy.get_name() + "]:::Listing on UDP Port: "
                              + str(udp_recv_port) + " setup failed")
                 raise RuntimeError("UDP cannot open")
-            first_packet = True
-
             udp_send_sock = QUdpSocket()
             s_time = rospy.Time.now().to_nsec()
             counter = 0
-            rospy.logwarn("[" + self.name + "]:: Start transmitting data")
+            rospy.logwarn("[" + self.name + "]:: Start Listening for data")
             while True:
                 if udp_recv_socket.hasPendingDatagrams():
                     datagram, host, port = udp_recv_socket.readDatagram(udp_recv_socket.pendingDatagramSize())
-                    if first_packet:
-                        first_packet = False
-                        rospy.logwarn(
-                            "[" + rospy.get_name() + "]:::Receive teleop control info from ip: "
-                            + str(host.toString()) + " PORT: " + str(port)
-                        )
-                        data_buffer = QByteArray(datagram)
-                        ret = read_byte_array(data_buffer, self.get_number_of_robots())
-                        if ret is not None:
-                            for ind, data in enumerate(ret):
-                                self.kinematics_interfaces[ind].send_desired_pose(dql.DQ(data.desired_pose))
-                                self.kinematics_interfaces[ind].send_reference_frame(dql.DQ([1]))
+                    rospy.logwarn(
+                        "[" + rospy.get_name() + "]:::Receive teleop control info from ip: "
+                        + str(host.toString()) + " PORT: " + str(port)
+                    )
+                    break
+
+            while True:
+                if udp_recv_socket.hasPendingDatagrams():
+                    datagram, host, port = udp_recv_socket.readDatagram(udp_recv_socket.pendingDatagramSize())
+                    data_buffer = QByteArray(datagram)
+                    ret = read_byte_array(data_buffer, self.get_number_of_robots())
+                    if ret is not None:
+                        for ind, data in enumerate(ret):
+                            self.kinematics_interfaces[ind].send_desired_pose(dql.DQ(data.desired_pose))
+                            self.kinematics_interfaces[ind].send_desired_interpolator_speed(0)
+                            if self.gripper_drivers[ind].is_enabled():
                                 gripper_limit = self.gripper_drivers[ind].get_joint_limits()
-                                gripper_val = [linear_map(data.gripper[0], gripper_limit[0], gripper_limit[1], self.flip_gripper)]
-                                self.gripper_drivers[ind].send_target_joint_positions([gripper_val])
+                            else:
+                                gripper_limit = [[0], [1]]
+                            gripper_val = [linear_map(data.gripper[0], gripper_limit[0][0], gripper_limit[1][0], self.flip_gripper)]
+                            self.gripper_drivers[ind].send_target_joint_positions([gripper_val])
 
                 rate.sleep()
 
