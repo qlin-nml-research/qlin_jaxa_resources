@@ -21,7 +21,7 @@
 <!--Contributors (aside from author):-->
 <!--    None-->
 <launch>
-    <node pkg="jaxa_communication" type="delay_teleop_kinematics_transmitter_node.py" name="delay_teleop_transmitter_node" clear_params="true">
+    <node pkg="jaxa_communication" type="delay_teleop_kinematics_receiver_node.py" name="delay_teleop_receiver_node" clear_params="true">
         <rosparam subst_value="true">
             robot_kinematic_interfaces_ns: ['/arm1_kinematics', '/arm2_kinematics']
             manipulator_interfaces_ns: ["/escon_4","/escon_2"]
