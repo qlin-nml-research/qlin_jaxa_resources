@@ -37,7 +37,7 @@
             receiving_port: 21390
             retransmit_ips: [$(env REMOTE_ROBOT_PC_IP)]
             retransmit_ports: [21391]
-            retransmit_delay: [6.0]
+            retransmit_delay: [$(env TELEOP_DELAY)]
 <!--             enable_logging_to_path: $(find jaxa_communication)/log/11_20_test_random_move-2.udp_log -->
 <!--             replay_file: $(find jaxa_communication)/log/11_20_test_random_move-2.udp_log -->
         </rosparam>
