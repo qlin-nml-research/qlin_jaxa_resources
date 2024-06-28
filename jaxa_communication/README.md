@@ -78,7 +78,7 @@ roslaunch jaxa_communication manipulator_delay_retransmitter.launch --screen
 
 The node configuration currently are done under the launch file directly.
 
-1. [`manipulator_delay_retransmitter.launch`](launch/manipulator_delay_retransmitter.launch) 
+1. [`manipulator_delay_retransmitter.launch`](launch/not_used/manipulator_delay_retransmitter.launch) 
 
 ```yaml
 patient_side_port: 2220

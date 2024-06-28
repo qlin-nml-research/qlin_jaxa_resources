@@ -19,18 +19,27 @@
 <!--    Hung-Ching Lin (qlin1806@g.ecc.u-tokyo.ac.jp)-->
 
 <!--Contributors (aside from author):-->
-<!--    Saúl Alexis Heredia Pérez-->
+<!--    None-->
 <launch>
-    <node pkg="jaxa_communication" type="vr_tool_pose_udp_transmitter.py"
-          name="tool_pose_udp_transmitter_node" required="true">
+    <node pkg="jaxa_communication" type="delay_teleop_kinematics_transmitter_node.py" name="delay_teleop_transmitter_node" clear_params="true">
         <rosparam subst_value="true">
-            rate: 30
-            port: 20023
-            remote_ip: $(env LOCAL_VR_PC_IP)
-            arm1_manipulator_ns: 0_1
-            arm1_kinematics_ns: /arm1_kinematics
-            arm2_manipulator_ns: 0_0
-            arm2_kinematics_ns: /arm2_kinematics
+            robot_kinematic_interfaces_ns: ['/arm1_kinematics', '/arm2_kinematics']
+            manipulator_interfaces_ns: ['0_1', '0_0']
+            remote_side_ip: 127.0.0.1
+            remote_side_port: 21390
+            transmit_rate: 250
+        </rosparam>
+    </node>
+
+    <node pkg="jaxa_communication" type="udp_delay_retransmitter.py"
+          name="to_patient_side_retransmitter_node" clear_params="true">
+        <rosparam subst_value="true">
+            receiving_port: 21390
+            retransmit_ips: [$(env REMOTE_ROBOT_PC_IP)]
+            retransmit_ports: [21391]
+            retransmit_delay: [6.0]
+<!--             enable_logging_to_path: $(find jaxa_communication)/log/11_20_test_random_move-2.udp_log -->
+<!--             replay_file: $(find jaxa_communication)/log/11_20_test_random_move-2.udp_log -->
         </rosparam>
     </node>
 </launch>

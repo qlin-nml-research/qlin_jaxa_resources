@@ -19,18 +19,15 @@
 <!--    Hung-Ching Lin (qlin1806@g.ecc.u-tokyo.ac.jp)-->
 
 <!--Contributors (aside from author):-->
-<!--    Saúl Alexis Heredia Pérez-->
+<!--    None-->
 <launch>
-    <node pkg="jaxa_communication" type="vr_tool_pose_udp_transmitter.py"
-          name="tool_pose_udp_transmitter_node" required="true">
+    <node pkg="jaxa_communication" type="delay_teleop_kinematics_transmitter_node.py" name="delay_teleop_transmitter_node" clear_params="true">
         <rosparam subst_value="true">
-            rate: 30
-            port: 20023
-            remote_ip: $(env LOCAL_VR_PC_IP)
-            arm1_manipulator_ns: 0_1
-            arm1_kinematics_ns: /arm1_kinematics
-            arm2_manipulator_ns: 0_0
-            arm2_kinematics_ns: /arm2_kinematics
+            robot_kinematic_interfaces_ns: ['/arm1_kinematics', '/arm2_kinematics']
+            manipulator_interfaces_ns: ["/escon_4","/escon_2"]
+            flip_gripper: [false, false]
+            remote_side_open_ports: 21391
         </rosparam>
     </node>
+
 </launch>
