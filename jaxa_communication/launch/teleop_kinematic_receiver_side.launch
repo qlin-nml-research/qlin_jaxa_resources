@@ -25,7 +25,7 @@
         <rosparam subst_value="true">
             robot_kinematic_interfaces_ns: ['/arm1_kinematics', '/arm2_kinematics']
             gripper_drivers_ns: ["/escon_4","/escon_2"]
-            flip_gripper: [false, false]
+            flip_gripper: [true, true]
             remote_side_open_port: 21391
         </rosparam>
     </node>
