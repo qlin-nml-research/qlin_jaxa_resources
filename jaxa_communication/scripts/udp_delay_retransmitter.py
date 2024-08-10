@@ -291,8 +291,23 @@ class DelayRetransmitterMain:
 USE_GUI_TQDM = False
 
 NON_ROS_INIT_PARAM = {
-    "retransmit_ips": ["10.198.113.140"],
+    # # non delayed adaptive control on jaxa remote vm
+    # "retransmit_ips": ["10.198.113.140"],
+    # "retransmit_ports": [2223],
+    # delayed adaptive teleop local vm at PC
+    # "retransmit_ips": ["10.198.113.127"],
+    # "retransmit_ports": [2222],
+    # Jaxa remote VM at lab pc
+    # "retransmit_ips": ["10.198.113.140"],
+    # "retransmit_ports": [2223],
+
+    # # home testing vm
+    "retransmit_ips": ["192.168.10.98"],
     "retransmit_ports": [2223],
+    # moonshot
+    # "retransmit_ips": ["10.198.113.176"],
+    # "retransmit_ports": [2223],
+
     "retransmit_delay": [0],
     "replay_file": "../log/11_20_test_random_move-2.udp_log",
 }
