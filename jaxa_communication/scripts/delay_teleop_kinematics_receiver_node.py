@@ -152,7 +152,7 @@ class TeleopKinematicsReceiver:
                     ret = read_byte_array(data_buffer, self.get_number_of_robots())
                     if ret is not None:
                         for ind, data in enumerate(ret):
-                            self.kinematics_interfaces[ind].send_desired_pose(dql.DQ(data.desired_pose))
+                            self.kinematics_interfaces[ind].send_desired_pose(dql.DQ(data.desired_pose).normalize())
                             self.kinematics_interfaces[ind].send_desired_interpolator_speed(0)
                             if self.gripper_drivers[ind].is_enabled():
                                 gripper_limit = self.gripper_drivers[ind].get_joint_limits()
