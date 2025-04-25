@@ -7,3 +7,6 @@
 [submodule "qlin_operator_side_receiver"]
 	path = qlin_operator_side_receiver
 	url = https://gitea.qlin.me/qlin/qlin_operator_side_receiver.git
+[submodule "qlin_jaxa_sensors"]
+	path = qlin_jaxa_sensors
+	url = https://github.com/qlin960618/qlin_jaxa_sensors.git
